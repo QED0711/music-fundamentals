@@ -1,0 +1,29 @@
+{
+  "name": "music-fundamentals",
+  "version": "1.0.0",
+  "description": "A music focused LMS that provides students with easy access to interactive lessons, and provides instructors with the tools they need to make high quality lessons and exercises.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/QED0711/music-fundamentals.git"
+  },
+  "keywords": [
+    "\"music",
+    "theory\"",
+    "\"Learning",
+    "Management",
+    "System\""
+  ],
+  "author": "Quinn Dizon",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/QED0711/music-fundamentals/issues"
+  },
+  "homepage": "https://github.com/QED0711/music-fundamentals#readme",
+  "dependencies": {
+    "express": "^4.16.4"
+  }
+}
