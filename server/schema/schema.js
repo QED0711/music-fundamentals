@@ -25,7 +25,7 @@ const InstructorType = new GraphQLObjectType({
         lessons: {
             type: new GraphQLList(LessonType),
             resolve(parent, args){
-                return Instructor.findById(parent.instructorId);
+                return Lesson.find({instructorId: parent.id});
             }
         }
     })
@@ -37,10 +37,12 @@ const LessonType = new GraphQLObjectType({
         id: {type: GraphQLID},
         title: {type: GraphQLString},
         description: {type: GraphQLString},
-        constents: {
+        tags: {type: new GraphQLList(GraphQLString)},
+        instructorId: {type: GraphQLID},
+        contents: {
             type: new GraphQLList(ContentType),
             resolve(parent,args){
-                console.log("Hit Lesson => Contents")
+                return Content.find({lessonId: parent.id});
             }
         }
     })
@@ -52,6 +54,7 @@ const ContentType = new GraphQLObjectType({
         id: {type:GraphQLID},
         type: {type: GraphQLString},
         data: {type: GraphQLString},
+        lessonId: {type: GraphQLID},
     })
 })
 
@@ -70,9 +73,7 @@ const RootQuery = new GraphQLObjectType({
             type: InstructorType,
             args: {name: {type: GraphQLString}},
             resolve(parent, args){
-                console.log(args)
-                
-                return Instructor.find({name: args.name});
+                return Instructor.find({name: args.name})
             }
         },
         instructors: {
@@ -85,9 +86,31 @@ const RootQuery = new GraphQLObjectType({
             type: LessonType,
             args: {id: {type: GraphQLID}},
             resolve(parent, args){
-                return "LESSON TYPE"
+                return Lesson.findById(args.id)
             }
-        }
+        },
+        lessons: {
+            type: new GraphQLList(LessonType),
+            resolve(parent, args){
+                return Lesson.find()
+            }
+        },
+        lessonsByTag: {
+            type: new GraphQLList(LessonType),
+            args: {
+                tag: {type: GraphQLString}
+            },
+            resolve(parent, args){
+                return Lesson.find({tags: args.tag})
+            }
+        },
+        content: {
+            type: ContentType,
+            args: {id: {type: GraphQLID}},
+            resolve(parent, args){
+                return Content.findById(args.id);
+            }
+        },
     }
 })
 
@@ -112,6 +135,39 @@ const Mutation = new GraphQLObjectType({
                 return instructor.save();
             }
         },
+        
+        addLesson: {
+            type: LessonType,
+            args: {
+                instructorId: {type: new GraphQLNonNull(GraphQLID)},
+                title: {type: new GraphQLNonNull(GraphQLString)},
+                description: {type: new GraphQLNonNull(GraphQLString)},
+                tags: {type: new GraphQLList(GraphQLString)}
+            },
+            resolve(parent,args){
+                let lesson = new Lesson({
+                    instructorId: args.instructorId,
+                    title: args.title,
+                    description: args.description,
+                    tags: args.tags
+                })
+                return lesson.save()
+            }
+        },
+
+        addContent: {
+            type: ContentType,
+            args: {
+                lessonId: {type: new GraphQLNonNull(GraphQLID)},
+                type: {type: new GraphQLNonNull(GraphQLString)},
+                data: {type: new GraphQLNonNull(GraphQLString)},
+            },
+            resolve(parent, args){
+                let content = new Content(args)
+                return content.save();
+            }
+        }
+
     }
 })
 
