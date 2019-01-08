@@ -5,6 +5,7 @@ const LessonSchema = new Schema({
     instructorId: String,
     title: String,
     description: String,
+    published: Boolean,
     tags: [{type: String}]
 })
 

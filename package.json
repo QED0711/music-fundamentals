@@ -25,6 +25,7 @@
   },
   "homepage": "https://github.com/QED0711/music-fundamentals#readme",
   "dependencies": {
+    "bcrypt": "^3.0.3",
     "cors": "^2.8.5",
     "express": "^4.16.4",
     "express-graphql": "^0.7.1",

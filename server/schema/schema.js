@@ -10,6 +10,7 @@ const {
     GraphQLSchema,
     GraphQLID,
     GraphQLInt,
+    GraphQLBoolean,
     GraphQLList,
     GraphQLNonNull
 } = graphql;
@@ -37,6 +38,7 @@ const LessonType = new GraphQLObjectType({
         id: {type: GraphQLID},
         title: {type: GraphQLString},
         description: {type: GraphQLString},
+        published: {type: GraphQLBoolean},
         tags: {type: new GraphQLList(GraphQLString)},
         instructorId: {type: GraphQLID},
         contents: {
@@ -118,7 +120,7 @@ const RootQuery = new GraphQLObjectType({
 const Mutation = new GraphQLObjectType({
     name: "Mutation",
     fields: {
-        addInstructor: {
+        createInstructor: {
             type: InstructorType,
             args: {
                 name: {type: new GraphQLNonNull(GraphQLString)},
@@ -136,7 +138,7 @@ const Mutation = new GraphQLObjectType({
             }
         },
         
-        addLesson: {
+        createLesson: {
             type: LessonType,
             args: {
                 instructorId: {type: new GraphQLNonNull(GraphQLID)},
@@ -149,13 +151,28 @@ const Mutation = new GraphQLObjectType({
                     instructorId: args.instructorId,
                     title: args.title,
                     description: args.description,
+                    published: false,
                     tags: args.tags
                 })
                 return lesson.save()
             }
         },
 
-        addContent: {
+        publishLesson: {
+            type: LessonType,
+            args: {
+                id: {type: new GraphQLNonNull(GraphQLID)},
+                published: {type: new GraphQLNonNull(GraphQLBoolean)}
+            },
+            resolve(parent, args){
+                return Lesson.findByIdAndUpdate(
+                    args.id,
+                    {$set: {published: args.published}}
+                ).catch(err => new Error(err))
+            }
+        },
+
+        creatContent: {
             type: ContentType,
             args: {
                 lessonId: {type: new GraphQLNonNull(GraphQLID)},
