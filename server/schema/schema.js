@@ -4,6 +4,9 @@ const Instructor = require('../models/instructor')
 const Lesson = require('../models/lesson')
 const Content = require('../models/content')
 
+const bcrypt = require("bcrypt")
+const SALT_WORK_FACTOR = 10;
+
 const { 
     GraphQLObjectType,
     GraphQLString,
@@ -72,12 +75,41 @@ const RootQuery = new GraphQLObjectType({
             }
         },
         instructorByName: {
-            type: InstructorType,
-            args: {name: {type: GraphQLString}},
+            type: new GraphQLList(InstructorType),
+            args: {
+                name: {type: GraphQLString}
+            },
             resolve(parent, args){
-                return Instructor.find({name: args.name})
+                return Instructor.find({name: args.name});
             }
         },
+        instructorByEmail: {
+            type: new GraphQLList(InstructorType),
+            args: {
+                email: {type: GraphQLString},
+                password: {type: GraphQLString}
+            },
+            async resolve(parent, args){
+                let instructor = await Instructor.find({email: args.email});
+                let compared = await bcrypt.compare(args.password, instructor[0].password)
+                if(compared){
+                    return instructor
+                }
+                // console.log(instructor[0].password)
+                // return 
+            }
+        },
+        // instructorByCredentials: {
+        //     type: new GraphQLList(InstructorType),
+        //     args: {
+        //         email: {type: GraphQLString},
+        //         password: {type: GraphQLString}
+        //     },
+        //     resolve(parent, args){
+        //         let password = bcrypt.hash(args.password, SALT_WORK_FACTOR)
+        //         return Instructor.find({email: args.email, password: password});
+        //     }
+        // },
         instructors: {
             type: new GraphQLList(InstructorType),
             resolve(parent, args){

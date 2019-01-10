@@ -28,10 +28,16 @@ instructorSchema.pre("save", function(next){
     })
 })
 
+
+
 instructorSchema.methods.comparePassword = (instructorPassword, cb) => {
     bcrypt.compare(instructorPassword, this.password, function(err, isMatch){
         cb(null, isMatch)
     })
 }
+
+instructorSchema.virtual("hashedPassword").get(function () {
+    return this.password
+})
 
 module.exports =  mongoose.model("Instructor", instructorSchema);
