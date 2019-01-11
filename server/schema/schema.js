@@ -39,6 +39,7 @@ const LessonType = new GraphQLObjectType({
     name: "Lesson",
     fields: () => ({
         id: {type: GraphQLID},
+        type: {type: GraphQLString},
         title: {type: GraphQLString},
         description: {type: GraphQLString},
         published: {type: GraphQLBoolean},
@@ -95,21 +96,8 @@ const RootQuery = new GraphQLObjectType({
                 if(compared){
                     return instructor
                 }
-                // console.log(instructor[0].password)
-                // return 
             }
         },
-        // instructorByCredentials: {
-        //     type: new GraphQLList(InstructorType),
-        //     args: {
-        //         email: {type: GraphQLString},
-        //         password: {type: GraphQLString}
-        //     },
-        //     resolve(parent, args){
-        //         let password = bcrypt.hash(args.password, SALT_WORK_FACTOR)
-        //         return Instructor.find({email: args.email, password: password});
-        //     }
-        // },
         instructors: {
             type: new GraphQLList(InstructorType),
             resolve(parent, args){
@@ -174,6 +162,7 @@ const Mutation = new GraphQLObjectType({
             type: LessonType,
             args: {
                 instructorId: {type: new GraphQLNonNull(GraphQLID)},
+                type: {type: new GraphQLNonNull(GraphQLString)},
                 title: {type: new GraphQLNonNull(GraphQLString)},
                 description: {type: new GraphQLNonNull(GraphQLString)},
                 tags: {type: new GraphQLList(GraphQLString)}
@@ -181,6 +170,7 @@ const Mutation = new GraphQLObjectType({
             resolve(parent,args){
                 let lesson = new Lesson({
                     instructorId: args.instructorId,
+                    type: args.type,
                     title: args.title,
                     description: args.description,
                     published: false,
