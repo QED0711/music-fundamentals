@@ -3,8 +3,22 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const contentSchema = new Schema({
-    type: String,
-    data: String,
+    type: {
+        type: String,
+        enum: [
+            'paragraph', 
+            'heading1', 
+            'heading2',
+            'nfPlayer',
+            'nfInteractive',
+            'image',
+            'iframe',
+            'bulletList',
+            'numberedList'
+        ],
+        default: 'paragraph'
+    },
+    data: [{type: String}],
     lessonId: String,
 })
 

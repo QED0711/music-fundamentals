@@ -5,7 +5,6 @@ const Lesson = require('../models/lesson')
 const Content = require('../models/content')
 
 const bcrypt = require("bcrypt")
-const SALT_WORK_FACTOR = 10;
 
 const { 
     GraphQLObjectType,
@@ -59,7 +58,7 @@ const ContentType = new GraphQLObjectType({
     fields: () => ({
         id: {type:GraphQLID},
         type: {type: GraphQLString},
-        data: {type: GraphQLString},
+        data: {type: new GraphQLList(GraphQLString)},
         lessonId: {type: GraphQLID},
     })
 })
@@ -194,12 +193,12 @@ const Mutation = new GraphQLObjectType({
             }
         },
 
-        creatContent: {
+        createContent: {
             type: ContentType,
             args: {
                 lessonId: {type: new GraphQLNonNull(GraphQLID)},
                 type: {type: new GraphQLNonNull(GraphQLString)},
-                data: {type: new GraphQLNonNull(GraphQLString)},
+                data: {type: new GraphQLList(GraphQLString)},
             },
             resolve(parent, args){
                 let content = new Content(args)
