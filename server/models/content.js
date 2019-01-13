@@ -7,8 +7,8 @@ const contentSchema = new Schema({
         type: String,
         enum: [
             'paragraph', 
-            'heading1', 
-            'heading2',
+            'heading2', 
+            'heading3',
             'nfPlayer',
             'nfInteractive',
             'image',
@@ -20,6 +20,7 @@ const contentSchema = new Schema({
     },
     data: [{type: String}],
     lessonId: String,
+    position: Number,
 })
 
 module.exports =  mongoose.model("Content", contentSchema);

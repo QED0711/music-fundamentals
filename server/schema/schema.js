@@ -60,6 +60,7 @@ const ContentType = new GraphQLObjectType({
         type: {type: GraphQLString},
         data: {type: new GraphQLList(GraphQLString)},
         lessonId: {type: GraphQLID},
+        position: {type: GraphQLInt}
     })
 })
 
@@ -198,7 +199,9 @@ const Mutation = new GraphQLObjectType({
             args: {
                 lessonId: {type: new GraphQLNonNull(GraphQLID)},
                 type: {type: new GraphQLNonNull(GraphQLString)},
-                data: {type: new GraphQLList(GraphQLString)},
+                data: {type: new GraphQLNonNull(new GraphQLList(GraphQLString))},
+                position: {type: new GraphQLNonNull(GraphQLInt)},
+
             },
             resolve(parent, args){
                 let content = new Content(args)
