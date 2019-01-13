@@ -126,6 +126,15 @@ const RootQuery = new GraphQLObjectType({
                 return Lesson.find({tags: args.tag})
             }
         },
+        lessonsByInstructor: {
+            type: new GraphQLList(LessonType),
+            args: {
+                instructorId: {type: GraphQLID}
+            },
+            resolve(parent,args){
+                return Lesson.find({instructorId: args.instructorId})
+            }
+        },
         content: {
             type: ContentType,
             args: {id: {type: GraphQLID}},
@@ -180,17 +189,15 @@ const Mutation = new GraphQLObjectType({
             }
         },
 
-        publishLesson: {
+        toggleLessonPublish: {
             type: LessonType,
             args: {
                 id: {type: new GraphQLNonNull(GraphQLID)},
-                published: {type: new GraphQLNonNull(GraphQLBoolean)}
             },
-            resolve(parent, args){
-                return Lesson.findByIdAndUpdate(
-                    args.id,
-                    {$set: {published: args.published}}
-                ).catch(err => new Error(err))
+            async resolve(parent, args){
+                let lesson = await Lesson.findById(args.id);
+                lesson.published = !lesson.published;
+                return lesson.save()
             }
         },
 
