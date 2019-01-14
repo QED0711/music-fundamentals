@@ -201,6 +201,16 @@ const Mutation = new GraphQLObjectType({
             }
         },
 
+        deleteLesson: {
+            type: LessonType,
+            args: {
+                id: {type: new GraphQLNonNull(GraphQLID)}
+            },
+            resolve(parent, {id}){
+                return Lesson.findByIdAndRemove(id);
+            }
+        },
+
         createContent: {
             type: ContentType,
             args: {
