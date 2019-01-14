@@ -210,7 +210,7 @@ const Mutation = new GraphQLObjectType({
                 return Lesson.findByIdAndRemove(id);
             }
         },
-
+        
         createContent: {
             type: ContentType,
             args: {
@@ -218,11 +218,21 @@ const Mutation = new GraphQLObjectType({
                 type: {type: new GraphQLNonNull(GraphQLString)},
                 data: {type: new GraphQLNonNull(new GraphQLList(GraphQLString))},
                 position: {type: new GraphQLNonNull(GraphQLInt)},
-
+                
             },
             resolve(parent, args){
                 let content = new Content(args)
                 return content.save();
+            }
+        },
+        
+        deleteContent:{
+            type: ContentType,
+            args: {
+                id: {type: new GraphQLNonNull(GraphQLID)},
+            },
+            resolve(parent, {id}){
+                return Content.findByIdAndRemove(id);
             }
         }
 
