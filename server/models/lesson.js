@@ -3,7 +3,14 @@ const Schema = mongoose.Schema;
 
 const LessonSchema = new Schema({
     instructorId: String,
-    type: String,
+    type: {
+        type: String,
+        enum: [
+            "reading",
+            "interactive",
+            "dictation"
+        ]
+    },
     title: String,
     description: String,
     published: Boolean,
