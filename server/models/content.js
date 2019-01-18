@@ -30,15 +30,15 @@ contentSchema.statics.reorderContents = async function(lessonId, id, position, c
     return new Promise(async (resolve) => {
         let contents = await this.find({lessonId});
         contents = contents.sort((a,b) => a.position - b.position);
-    
+        
         position = position > contents.length ? contents.length - 1 : position
         let oldPosition = contents.filter(x => x.id === id)[0].position;
         let movement = oldPosition - position;
-    
+        
         let newOrder = []
-    
+        
         if(movement > 0){ // moving position backwards
-    
+            
             for(let i = 0; i < contents.length; i++){
                 if(i === oldPosition) continue;
                 if(i === position){
@@ -68,7 +68,7 @@ contentSchema.statics.reorderContents = async function(lessonId, id, position, c
                 await newOrder[newOrder.length - 1].save();
             }
         }
-        resolve(newOrder[position])    
+        resolve (this.find({lessonId}))
     })
 }
 

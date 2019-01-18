@@ -236,15 +236,15 @@ const Mutation = new GraphQLObjectType({
             }
         },
 
-        changeContentPositions:{
-            type: ContentType,
+        reorderContents:{
+            type: new GraphQLList(ContentType),
             args: {
                 lessonId: {type: new GraphQLNonNull(GraphQLID)},
                 id: {type: new GraphQLNonNull(GraphQLID)},
                 position: {type: new GraphQLNonNull(GraphQLInt)}
             },
             resolve(parent, {lessonId, id, position}){
-                return Content.reorderContents(lessonId, id, position)
+                 return Content.reorderContents(lessonId, id, position)
             }
         }
 
