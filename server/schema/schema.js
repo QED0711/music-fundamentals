@@ -234,6 +234,58 @@ const Mutation = new GraphQLObjectType({
             resolve(parent, {id}){
                 return Content.findByIdAndRemove(id);
             }
+        },
+
+        changeContentPositions:{
+            type: ContentType,
+            args: {
+                lessonId: {type: new GraphQLNonNull(GraphQLID)},
+                id: {type: new GraphQLNonNull(GraphQLID)},
+                position: {type: new GraphQLNonNull(GraphQLInt)}
+            },
+            async resolve(parent, {lessonId, id, position}){
+                let contents = await Content.find({lessonId});
+                contents = contents.sort((a,b) => a.position - b.position);
+                position = position > contents.length ? contents.length - 1 : position
+                let oldPosition = contents.filter(x => x.id === id)[0].position;
+                let movement = oldPosition - position;
+
+                let newOrder = []
+
+                if(movement > 0){ // moving position backwards
+
+                    for(let i = 0; i < contents.length; i++){
+                        if(i === oldPosition) continue;
+                        if(i === position){
+                            newOrder.push(contents[oldPosition]);
+                            newOrder[newOrder.length - 1].position = newOrder.length - 1
+                            await newOrder[newOrder.length - 1].save();
+                            newOrder.push(contents[i]);
+                        } else {
+                            newOrder.push(contents[i]);
+                        }
+                        newOrder[newOrder.length - 1].position = newOrder.length - 1
+                        await newOrder[newOrder.length - 1].save();
+                    }
+                    
+                } else if(movement < 0){ // moving forwards
+                    for(let i = 0; i < contents.length; i++){
+                        if(i === oldPosition) continue; 
+                        if(i === position){
+                            newOrder.push(contents[i]);
+                            newOrder[newOrder.length - 1].position = newOrder.length - 1
+                            await newOrder[newOrder.length - 1].save();
+                            newOrder.push(contents[oldPosition]);
+                        } else {
+                            newOrder.push(contents[i]);
+                        }
+                        newOrder[newOrder.length - 1].position = newOrder.length - 1
+                        await newOrder[newOrder.length - 1].save();
+                    }
+                }
+                console.log(newOrder)
+                return(newOrder[position])
+            }
         }
 
     }
