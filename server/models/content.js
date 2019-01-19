@@ -73,5 +73,12 @@ contentSchema.statics.reorderContents = async function(lessonId, id, position, c
 }
 
 
+// contentSchema.statics.deleteByLessonId = async function(lessonId){
+//     let contents = await this.find({lessonId});
+//     for(content of contents){
+//         content.remove();
+//     }
+// }
+
 
 module.exports =  mongoose.model("Content", contentSchema);

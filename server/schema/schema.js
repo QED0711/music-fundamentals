@@ -206,7 +206,9 @@ const Mutation = new GraphQLObjectType({
             args: {
                 id: {type: new GraphQLNonNull(GraphQLID)}
             },
-            resolve(parent, {id}){
+            async resolve(parent, {id}){
+                let contents = await Content.find({lessonId: id})
+                contents.forEach(content => content.remove())
                 return Lesson.findByIdAndRemove(id);
             }
         },
