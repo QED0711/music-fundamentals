@@ -248,6 +248,23 @@ const Mutation = new GraphQLObjectType({
             resolve(parent, {lessonId, id, position}){
                  return Content.reorderContents(lessonId, id, position)
             }
+        },
+
+        updateContent: {
+            type: new GraphQLList(ContentType),
+            args: {
+                id: {type: new GraphQLNonNull(GraphQLID)},
+                data: {type: new GraphQLNonNull(new GraphQLList(GraphQLString))},
+                position: {type: GraphQLInt},
+            },
+            async resolve(parent, {id, data, position}){
+                let content = await Content.findById(id);
+                content.data = data;
+                content.save()                
+                // we return all the contents of the lesson so that we can reset 
+                // our main application state with a new version of our currentLesson contents
+                return await Content.find({lessonId: content.lessonId})
+            }
         }
 
     }
