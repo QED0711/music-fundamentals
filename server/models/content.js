@@ -75,16 +75,27 @@ contentSchema.statics.reorderContents = async function(lessonId, id, position, c
 contentSchema.statics.removeAndReorderContents = function(lessonId, id, position){
     return new Promise(async (resolve) => {
         let contents = await this.find({lessonId});
+        let reorderedContents = [];
         for(let content of contents){
+            // if content is the content we want to remove:
+            // remove it from the DB and exclude it from the return results
             if(content.id === id){
                 content.remove();
+            } else {
+                // If content is not the tart content to remove:
+                // Check to see if wee need to adjust its position (it had a position greater than the target content)
+                if(content.position > position){
+                    content.position -= 1;
+                    content.save();
+                }
+                // no matter what, push the non-target content to the return results
+                reorderedContents.push(content)
+
             }
-            if(content.position > position){
-                content.position -= 1;
-                content.save();
-            }
+
+
         }
-        resolve(await this.find({lessonId}));
+        resolve(reorderedContents);
     })
 }
 
