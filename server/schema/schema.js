@@ -212,6 +212,18 @@ const Mutation = new GraphQLObjectType({
                 return Lesson.findByIdAndRemove(id);
             }
         },
+
+        removeAndReorderContents: {
+            type: new GraphQLList(ContentType),
+            args: {
+                id: {type: new GraphQLNonNull(GraphQLID)}, // id of the content to be removed
+                position: {type: new GraphQLNonNull(GraphQLInt)}, // the position of the content to be removed
+                lessonId: {type: new GraphQLNonNull(GraphQLID)}, // id of the lesson that that content belongs to
+            },  
+            resolve(parent, {id, lessonId, position}){
+                return Content.removeAndReorderContents(lessonId, id, position)
+            }
+        },
         
         createContent: {
             type: ContentType,
@@ -227,6 +239,7 @@ const Mutation = new GraphQLObjectType({
                 return content.save();
             }
         },
+
         
         deleteContent:{
             type: ContentType,
@@ -234,6 +247,7 @@ const Mutation = new GraphQLObjectType({
                 id: {type: new GraphQLNonNull(GraphQLID)},
             },
             resolve(parent, {id}){
+                console.log("CALLED")
                 return Content.findByIdAndRemove(id);
             }
         },

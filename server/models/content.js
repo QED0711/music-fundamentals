@@ -72,6 +72,22 @@ contentSchema.statics.reorderContents = async function(lessonId, id, position, c
     })
 }
 
+contentSchema.statics.removeAndReorderContents = function(lessonId, id, position){
+    return new Promise(async (resolve) => {
+        let contents = await this.find({lessonId});
+        for(let content of contents){
+            if(content.id === id){
+                content.remove();
+            }
+            if(content.position > position){
+                content.position -= 1;
+                content.save();
+            }
+        }
+        resolve(await this.find({lessonId}));
+    })
+}
+
 
 // contentSchema.statics.deleteByLessonId = async function(lessonId){
 //     let contents = await this.find({lessonId});
