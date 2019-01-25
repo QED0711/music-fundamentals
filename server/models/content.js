@@ -12,9 +12,7 @@ const contentSchema = new Schema({
             'nfPlayer',
             'nfInteractive',
             'image',
-            'iframe',
-            'bulletList',
-            'numberedList'
+            'list',
         ],
         default: 'paragraph'
     },
