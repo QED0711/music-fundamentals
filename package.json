@@ -27,6 +27,7 @@
   "dependencies": {
     "bcrypt": "^3.0.3",
     "cors": "^2.8.5",
+    "cryptr": "^4.0.2",
     "express": "^4.16.4",
     "express-graphql": "^0.7.1",
     "graphql": "^14.0.2",

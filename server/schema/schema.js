@@ -5,6 +5,8 @@ const Lesson = require('../models/lesson')
 const Content = require('../models/content')
 
 const bcrypt = require("bcrypt")
+const Cryptr = require('cryptr');
+let cryptr = new Cryptr("12594378RJKb43")
 
 const { 
     GraphQLObjectType,
@@ -61,6 +63,14 @@ const ContentType = new GraphQLObjectType({
         data: {type: new GraphQLList(GraphQLString)},
         lessonId: {type: GraphQLID},
         position: {type: GraphQLInt}
+    })
+})
+
+const TokenType = new GraphQLObjectType({
+    name: "Token",
+    fields: () => ({
+        encrypted: {type: GraphQLString},
+        decrypted: {type:GraphQLString}
     })
 })
 
@@ -142,6 +152,29 @@ const RootQuery = new GraphQLObjectType({
                 return Content.findById(args.id);
             }
         },
+        encryptedToken: {
+            type: TokenType,
+            args: {
+                decrypted: {type: new GraphQLNonNull(GraphQLString)}
+            },
+            resolve(parent, {decrypted}){
+                let encrypted = cryptr.encrypt(decrypted);
+                return {
+                    encrypted,
+                    decrypted
+                }
+            }
+        },
+        decryptedToken: {
+            type: TokenType,
+            args: {
+                encrypted: {type: new GraphQLNonNull(GraphQLString)}
+            },
+            resolve(parent, {encrypted}){
+                let decrypted =  cryptr.decrypt(encrypted);
+                return {encrypted, decrypted}
+            }
+        }
     }
 })
 
@@ -198,6 +231,27 @@ const Mutation = new GraphQLObjectType({
                 let lesson = await Lesson.findById(args.id);
                 lesson.published = !lesson.published;
                 return lesson.save()
+            }
+        },
+
+        editLesson: {
+            type: LessonType,
+            args: {
+                id: {type: new GraphQLNonNull(GraphQLID)},
+                type: {type: new GraphQLNonNull(GraphQLString)},
+                title: {type: new GraphQLNonNull(GraphQLString)},
+                description: {type: new GraphQLNonNull(GraphQLString)},
+                tags: {type: new GraphQLNonNull(new GraphQLList(GraphQLString))},
+            },
+            async resolve(parent, {id, title, description, type, tags}){
+                let lesson = await Lesson.findById(id);
+
+                lesson.type = type;
+                lesson.title = title;
+                lesson.description = description;
+                lesson.tags = [...tags]
+
+                return lesson.save();
             }
         },
 
