@@ -152,29 +152,6 @@ const RootQuery = new GraphQLObjectType({
                 return Content.findById(args.id);
             }
         },
-        encryptedToken: {
-            type: TokenType,
-            args: {
-                decrypted: {type: new GraphQLNonNull(GraphQLString)}
-            },
-            resolve(parent, {decrypted}){
-                let encrypted = cryptr.encrypt(decrypted);
-                return {
-                    encrypted,
-                    decrypted
-                }
-            }
-        },
-        decryptedToken: {
-            type: TokenType,
-            args: {
-                encrypted: {type: new GraphQLNonNull(GraphQLString)}
-            },
-            resolve(parent, {encrypted}){
-                let decrypted =  cryptr.decrypt(encrypted);
-                return {encrypted, decrypted}
-            }
-        }
     }
 })
 
@@ -301,7 +278,6 @@ const Mutation = new GraphQLObjectType({
                 id: {type: new GraphQLNonNull(GraphQLID)},
             },
             resolve(parent, {id}){
-                console.log("CALLED")
                 return Content.findByIdAndRemove(id);
             }
         },
@@ -332,6 +308,31 @@ const Mutation = new GraphQLObjectType({
                 // we return all the contents of the lesson so that we can reset 
                 // our main application state with a new version of our currentLesson contents
                 return await Content.find({lessonId: content.lessonId})
+            }
+        },
+        generateToken: {
+            type: TokenType,
+            args: {
+                decrypted: {type: new GraphQLNonNull(GraphQLString)}
+            },
+            resolve(parent, {decrypted}){
+                let date = new Date();
+                let token = decrypted + `,date:${date}`
+                let encrypted = cryptr.encrypt(token);
+                return {
+                    encrypted,
+                    decrypted
+                }
+            }
+        },
+        decryptedToken: {
+            type: TokenType,
+            args: {
+                encrypted: {type: new GraphQLNonNull(GraphQLString)}
+            },
+            resolve(parent, {encrypted}){
+                let decrypted =  cryptr.decrypt(encrypted);
+                return {encrypted, decrypted}
             }
         }
 
