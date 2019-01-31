@@ -325,7 +325,7 @@ const Mutation = new GraphQLObjectType({
                 }
             }
         },
-        decryptedToken: {
+        decryptToken: {
             type: TokenType,
             args: {
                 encrypted: {type: new GraphQLNonNull(GraphQLString)}
