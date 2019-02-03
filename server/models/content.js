@@ -13,6 +13,7 @@ const contentSchema = new Schema({
             'nfInteractive',
             'image',
             'list',
+            'link',
         ],
         default: 'paragraph'
     },
