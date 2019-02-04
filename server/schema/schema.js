@@ -304,7 +304,7 @@ const Mutation = new GraphQLObjectType({
             async resolve(parent, {id, data, position}){
                 let content = await Content.findById(id);
                 content.data = data;
-                content.save()                
+                await content.save()                
                 // we return all the contents of the lesson so that we can reset 
                 // our main application state with a new version of our currentLesson contents
                 return await Content.find({lessonId: content.lessonId})
